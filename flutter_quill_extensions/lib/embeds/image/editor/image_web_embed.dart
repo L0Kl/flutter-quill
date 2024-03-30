@@ -10,11 +10,7 @@ import '../../../utils/element_utils/element_web_utils.dart';
 import '../../../utils/utils.dart';
 
 class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
-  const QuillEditorWebImageEmbedBuilder({
-    required this.configurations,
-  });
-
-  final QuillEditorWebImageEmbedConfigurations configurations;
+  const QuillEditorWebImageEmbedBuilder();
 
   @override
   String get key => BlockEmbed.imageType;
