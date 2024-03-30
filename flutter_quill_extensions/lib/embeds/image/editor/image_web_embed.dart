@@ -35,6 +35,8 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
 
     final (height, width, margin, alignment) = getWebElementAttributes(node);
 
+    print('height: $height, width: $width');
+
     var imageSource = node.value.data.toString();
 
     // This logic make sure if the image is imageBase64 then
