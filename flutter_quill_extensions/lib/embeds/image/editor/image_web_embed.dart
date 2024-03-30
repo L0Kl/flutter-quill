@@ -35,8 +35,6 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
 
     final (height, width, margin, alignment) = getWebElementAttributes(node);
 
-    print('height: $height, width: $width');
-
     var imageSource = node.value.data.toString();
 
     // This logic make sure if the image is imageBase64 then
@@ -62,9 +60,12 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
         ..attributes['loading'] = 'lazy';
     });
 
+    print('height: $height, width: $width');
+
     return ConstrainedBox(
-      constraints: configurations.constraints ??
-          BoxConstraints.loose(const Size(200, 200)),
+      constraints: BoxConstraints.loose(const Size(200, 200)),
+      // constraints: configurations.constraints ??
+      //     BoxConstraints.loose(const Size(200, 200)),
       child: HtmlElementView(
         viewType: imageSource,
       ),
