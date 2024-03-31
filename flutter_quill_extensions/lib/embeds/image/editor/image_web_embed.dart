@@ -52,13 +52,13 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
       }
     }
 
-    var imageBytes = base64Decode(imageSource);
-    img.Image? image = img.decodeImage(imageBytes);
-    if (image != null) {
-      imageWidth = image.width as double;
-      imageHeight = image.height as double;
-      print('Breite: ${image.width}, Höhe: ${image.height}');
-    }
+    // var imageBytes = base64Decode(imageSource);
+    // img.Image? image = img.decodeImage(imageBytes);
+    // if (image != null) {
+    //   imageWidth = image.width as double;
+    //   imageHeight = image.height as double;
+    //   print('Breite: ${image.width}, Höhe: ${image.height}');
+    // }
 
     ui.PlatformViewRegistry().registerViewFactory(imageSource, (viewId) {
       return html.ImageElement()
