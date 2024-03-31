@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:image/image.dart' as img;
 import 'package:universal_html/html.dart' as html;
 
 import '../../../models/config/image/editor/image_web_configurations.dart';
@@ -32,10 +34,8 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
   ) {
     assert(kIsWeb, 'ImageEmbedBuilderWeb is only for web platform');
 
-    final ((imageSize), margin, alignment) = getElementAttributes(
-      node,
-      context,
-    );
+    double imageWidth = 200;
+    double imageHeight = 200;
 
     var imageSource = node.value.data.toString();
 
@@ -52,6 +52,14 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
       }
     }
 
+    var imageBytes = base64Decode(imageSource);
+    img.Image? image = img.decodeImage(imageBytes);
+    if (image != null) {
+      imageWidth = image.width as double;
+      imageHeight = image.height as double;
+      print('Breite: ${image.width}, Höhe: ${image.height}');
+    }
+
     ui.PlatformViewRegistry().registerViewFactory(imageSource, (viewId) {
       return html.ImageElement()
         ..src = imageSource
@@ -60,11 +68,9 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
         ..attributes['loading'] = 'lazy';
     });
 
-    print('Height: ${imageSize.height} Width: ${imageSize.width}');
-
     return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(
-          width: imageSize.width, height: imageSize.height),
+      constraints:
+          BoxConstraints.tightFor(width: imageWidth, height: imageHeight),
       child: HtmlElementView(viewType: imageSource),
     );
   }
