@@ -8,6 +8,7 @@ import 'package:universal_html/html.dart' as html;
 import '../../../models/config/image/editor/image_web_configurations.dart';
 import '../../../utils/dart_ui/dart_ui_fake.dart'
     if (dart.library.html) '../../../utils/dart_ui/dart_ui_real.dart' as ui;
+import '../../../utils/element_utils/element_utils.dart';
 import '../../../utils/element_utils/element_web_utils.dart';
 import '../../../utils/utils.dart';
 
@@ -31,7 +32,10 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
   ) {
     assert(kIsWeb, 'ImageEmbedBuilderWeb is only for web platform');
 
-    final (height, width, margin, alignment) = getWebElementAttributes(node);
+    final ((imageSize), margin, alignment) = getElementAttributes(
+      node,
+      context,
+    );
 
     var imageSource = node.value.data.toString();
 
@@ -51,43 +55,17 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
     ui.PlatformViewRegistry().registerViewFactory(imageSource, (viewId) {
       return html.ImageElement()
         ..src = imageSource
-        ..style.height = height
-        ..style.width = width
-        ..style.margin = margin
-        ..style.alignSelf = alignment
+        ..style.height = 'auto'
+        ..style.width = 'auto'
         ..attributes['loading'] = 'lazy';
     });
 
-    return FutureBuilder<Size>(
-      future: loadImageAndGetSize(imageSource),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          return ConstrainedBox(
-            constraints: BoxConstraints.tightFor(
-                width: snapshot.data!.width, height: snapshot.data!.height),
-            child: HtmlElementView(viewType: imageSource),
-          );
-        } else if (snapshot.hasError) {
-          return const Text('Fehler beim Laden des Bildes');
-        } else {
-          // Während das Bild lädt, könnten Sie einen Platzhalter anzeigen
-          return const Text('Bild wird geladen...');
-        }
-      },
-    );
-  }
+    print('Height: ${imageSize.height} Width: ${imageSize.width}');
 
-  Future<Size> loadImageAndGetSize(String imageSource) async {
-    final completer = Completer<Size>();
-    final img = html.ImageElement(src: imageSource);
-    img.onLoad.listen((_) {
-      completer.complete(
-          Size(img.naturalWidth.toDouble(), img.naturalHeight.toDouble()));
-    });
-    img.onError.listen((_) {
-      completer.completeError('Bild konnte nicht geladen werden');
-    });
-    return completer.future;
+    return ConstrainedBox(
+      constraints: BoxConstraints.tightFor(
+          width: imageSize.width, height: imageSize.height),
+      child: HtmlElementView(viewType: imageSource),
+    );
   }
 }
