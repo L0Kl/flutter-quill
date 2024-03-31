@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -56,26 +58,36 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
         ..attributes['loading'] = 'lazy';
     });
 
-    loadImageAndGetSize(imageSource);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints.loose(const Size(200, 200)),
-      // constraints: configurations.constraints ??
-      //     BoxConstraints.loose(const Size(200, 200)),
-      child: HtmlElementView(
-        viewType: imageSource,
-      ),
+    return FutureBuilder<Size>(
+      future: loadImageAndGetSize(imageSource),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
+          return ConstrainedBox(
+            constraints: BoxConstraints.tightFor(
+                width: snapshot.data!.width, height: snapshot.data!.height),
+            child: HtmlElementView(viewType: imageSource),
+          );
+        } else if (snapshot.hasError) {
+          return const Text('Fehler beim Laden des Bildes');
+        } else {
+          // Während das Bild lädt, könnten Sie einen Platzhalter anzeigen
+          return const Text('Bild wird geladen...');
+        }
+      },
     );
   }
 
-  void loadImageAndGetSize(String imageSource) {
+  Future<Size> loadImageAndGetSize(String imageSource) async {
+    final completer = Completer<Size>();
     final img = html.ImageElement(src: imageSource);
     img.onLoad.listen((_) {
-      int width = img.naturalWidth;
-      int height = img.naturalHeight;
-
-      // Verwenden Sie hier die Breite und Höhe
-      print('Bildgröße: ${width}x${height}');
+      completer.complete(
+          Size(img.naturalWidth.toDouble(), img.naturalHeight.toDouble()));
     });
+    img.onError.listen((_) {
+      completer.completeError('Bild konnte nicht geladen werden');
+    });
+    return completer.future;
   }
 }
