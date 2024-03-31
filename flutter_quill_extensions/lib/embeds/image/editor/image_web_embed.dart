@@ -56,7 +56,7 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
         ..attributes['loading'] = 'lazy';
     });
 
-    print('height: $height, width: $width');
+    loadImageAndGetSize(imageSource);
 
     return ConstrainedBox(
       constraints: BoxConstraints.loose(const Size(200, 200)),
@@ -66,5 +66,16 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
         viewType: imageSource,
       ),
     );
+  }
+
+  void loadImageAndGetSize(String imageSource) {
+    final img = html.ImageElement(src: imageSource);
+    img.onLoad.listen((_) {
+      int width = img.naturalWidth;
+      int height = img.naturalHeight;
+
+      // Verwenden Sie hier die Breite und Höhe
+      print('Bildgröße: ${width}x${height}');
+    });
   }
 }
