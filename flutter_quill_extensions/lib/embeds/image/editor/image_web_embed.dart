@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -7,11 +6,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:image/image.dart' as img;
 import 'package:universal_html/html.dart' as html;
 
-import '../../../models/config/image/editor/image_web_configurations.dart';
 import '../../../utils/dart_ui/dart_ui_fake.dart'
     if (dart.library.html) '../../../utils/dart_ui/dart_ui_real.dart' as ui;
-import '../../../utils/element_utils/element_utils.dart';
-import '../../../utils/element_utils/element_web_utils.dart';
 import '../../../utils/utils.dart';
 
 class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
@@ -58,7 +54,6 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
     if (image != null) {
       imageWidth = image.width as double;
       imageHeight = image.height as double;
-      print('Breite: ${image.width}, Höhe: ${image.height}');
     }
 
     ui.PlatformViewRegistry().registerViewFactory(imageSource, (viewId) {
